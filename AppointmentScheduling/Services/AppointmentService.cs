@@ -20,7 +20,7 @@ namespace AppointmentScheduling.Services
         public async Task<int> AddUpdate(AppointmentVM model)
         {
             var startDate = DateTime.Parse(model.StartDate);
-            var endDate = DateTime.Parse(model.EndDate).AddMinutes(Convert.ToDouble(model.Duriation));
+            var endDate = DateTime.Parse(model.StartDate).AddMinutes(Convert.ToDouble(model.Duration));
             if (model != null && model.Id > 0)
             {
                 //update
@@ -35,7 +35,7 @@ namespace AppointmentScheduling.Services
                     Description = model.Description,
                     StartDate = startDate,
                     EndDate = endDate,
-                    Duriation = model.Duriation,
+                    Duration = model.Duration,
                     DoctorId = model.DoctorId,
                     PatientId = model.PatientId,
                     IsDoctorApproved = false,
@@ -45,6 +45,20 @@ namespace AppointmentScheduling.Services
                 await _db.SaveChangesAsync();
                 return 2;
             }
+        }
+
+        public List<AppointmentVM> DoctorsEventsById(string doctorId)
+        {
+            return _db.Appointments.Where(x => x.DoctorId == doctorId).ToList().Select(c => new AppointmentVM()
+            {
+                Id = c.Id,
+                Description = c.Description,
+                StartDate = c.StartDate.ToString("yyyy-MM-dd HH:mm:ss"),
+                EndDate = c.EndDate.ToString("yyyy-MM-dd HH:mm:ss"),
+                Title = c.Title,
+                Duration = c.Duration,
+                IsDoctorApproved = c.IsDoctorApproved
+            }).ToList();
         }
 
         public List<DoctorVM> GetDoctorList()
@@ -75,6 +89,20 @@ namespace AppointmentScheduling.Services
                            ).ToList();
 
             return patients;
+        }
+
+        public List<AppointmentVM> PatientsEventsById(string patientId)
+        {
+            return _db.Appointments.Where(x => x.PatientId == patientId).ToList().Select(c => new AppointmentVM()
+            {
+                Id = c.Id,
+                Description = c.Description,
+                StartDate = c.StartDate.ToString("yyyy-MM-dd HH:mm:ss"),
+                EndDate = c.EndDate.ToString("yyyy-MM-dd HH:mm:ss"),
+                Title = c.Title,
+                Duration = c.Duration,
+                IsDoctorApproved = c.IsDoctorApproved
+            }).ToList();
         }
     }
 }
