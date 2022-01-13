@@ -4,6 +4,7 @@ using AppointmentScheduling.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AppointmentScheduling.Services
 {
@@ -14,6 +15,36 @@ namespace AppointmentScheduling.Services
         public AppointmentService(ApplicationDbContext db)
         {
             _db = db;
+        }
+
+        public async Task<int> AddUpdate(AppointmentVM model)
+        {
+            var startDate = DateTime.Parse(model.StartDate);
+            var endDate = DateTime.Parse(model.EndDate).AddMinutes(Convert.ToDouble(model.Duriation));
+            if (model != null && model.Id > 0)
+            {
+                //update
+                return 1;
+            }
+            else
+            {
+                //create
+                Appointment appointment = new Appointment()
+                {
+                    Title = model.Title,
+                    Description = model.Description,
+                    StartDate = startDate,
+                    EndDate = endDate,
+                    Duriation = model.Duriation,
+                    DoctorId = model.DoctorId,
+                    PatientId = model.PatientId,
+                    IsDoctorApproved = false,
+                    AdminId = model.AdminId
+                };
+                _db.Appointments.Add(appointment);
+                await _db.SaveChangesAsync();
+                return 2;
+            }
         }
 
         public List<DoctorVM> GetDoctorList()
@@ -27,6 +58,7 @@ namespace AppointmentScheduling.Services
                                Name = user.Name
                            }
                            ).ToList();
+
             return doctors;
         }
 
