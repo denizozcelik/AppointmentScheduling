@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace AppointmentScheduling
 {
@@ -26,6 +27,13 @@ namespace AppointmentScheduling
             services.AddControllersWithViews();
             services.AddTransient<IAppointmentService, AppointmentService>();
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromDays(10);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
             services.AddHttpContextAccessor();
         }
 
@@ -49,6 +57,7 @@ namespace AppointmentScheduling
 
             app.UseAuthorization();
             app.UseAuthentication();
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
