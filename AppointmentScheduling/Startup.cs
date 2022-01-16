@@ -1,8 +1,10 @@
 using AppointmentScheduling.Models;
 using AppointmentScheduling.Services;
+using AppointmentScheduling.Utility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +30,7 @@ namespace AppointmentScheduling
             services.AddTransient<IAppointmentService, AppointmentService>();
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddDistributedMemoryCache();
+            services.AddScoped<IEmailSender, EmailSender>();
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromDays(10);
