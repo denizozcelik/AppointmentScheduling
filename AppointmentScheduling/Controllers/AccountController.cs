@@ -53,15 +53,10 @@ namespace AppointmentScheduling.Controllers
 
         public async Task<IActionResult> Register()
         {
-            //Check DB role exist ? if not exist add roles to [AspNetRoles] table
-            if (!_roleManager.RoleExistsAsync(Helper.Admin).GetAwaiter().GetResult())
-            {
-                await _roleManager.CreateAsync(new IdentityRole(Helper.Admin));
-                await _roleManager.CreateAsync(new IdentityRole(Helper.Doctor));
-                await _roleManager.CreateAsync(new IdentityRole(Helper.Patient));
-            }
+
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
